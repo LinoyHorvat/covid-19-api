@@ -6,7 +6,6 @@ const getCountries = async () => {
       headers: "application/json",
     },
   ]);
-  console.log(country);
   const heirarchy = country.data.data.latest_data;
   const data = [
     heirarchy.deaths,

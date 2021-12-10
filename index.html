@@ -1,32 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="style.css">
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
 </head>
 <body>
-  <button class="btn">Asia-demo</button>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js"></script>
-  <div style="position: relative; height: auto; width: 30vw">
+  <div style="position: relative; height: auto; width: 50vw">
     <canvas id="myChart"></canvas>
   </div>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="index.js"></script>
   
   <div class="cases-btn">
-    <button class="btn">Confirmed</button>
-    <button class="btn">Deaths</button>
-    <button class="btn">Recovered</button>
-    <button class="btn">Critical</button>
+    <button class="btn-data">Confirmed</button>
+    <button class="btn-data">Deaths</button>
+    <button class="btn-data">Recovered</button>
+    <button class="btn-data">Critical</button>
   </div>
   <div class="regions-container">
-    <button class="btn">Asia</button>
-    <button class="btn">Europe</button>
-    <button class="btn">Africa</button>
-    <button class="btn">Americas</button>
+    <button class="btn-regions">Asia</button>
+    <button class="btn-regions">Europe</button>
+    <button class="btn-regions">Africa</button>
+    <button class="btn-regions">Americas</button>
   </div>
+  <ul></ul>
 </body>
 <script src="/js.js"></script>
 </html>
