@@ -18,16 +18,20 @@ const world = {
   africa: {},
   americas: {},
 };
-let region = 'asia';
-let status = 'Confirmed';
-let myChart = null; 
+let region = "asia";
+let status = "Confirmed";
+let myChart = null;
 
 // html
 const btnRegions = document.querySelectorAll("button.btn-regions");
 const btnStatus = document.querySelectorAll("button.btn-data");
 const ul = document.querySelector("ul");
+let ctx = document.getElementById("myChart").getContext("2d");
+let chart = document.querySelector(".chart-div");
+let countryStatus = document.querySelector(".country-data")
+let statues = document.querySelectorAll(".status");
 
-getCountriesByRegion(region);
+hideStatus();
 
 btnRegions.forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -62,8 +66,8 @@ async function getCountriesByRegion(region) {
       regionsCountriesShort[region].push(country.cca2);
       world[region][country.cca2] = {};
       fetchCovidData(region, country.cca2, country.name.common);
-      buildCountriesTxtBtn(country.name.common);
-    })
+      buildCountriesTxtBtn(country.name.common, country.cca2);
+    });
   } catch (err) {
     console.log(err);
   }
@@ -90,7 +94,7 @@ async function fetchCovidData(region, country, name) {
     } catch (err) {
       console.log(err);
     }
-    await buildDataForChart(region, status);
+    buildDataForChart(region, status).then;
   }
 }
 
@@ -110,25 +114,30 @@ function buildWorldObj(
   world[region][country]["critical"] = critical;
 }
 
-function buildCountriesTxtBtn(country) {
+function buildCountriesTxtBtn(country, countryCodeName) {
   const li = document.createElement("li");
   ul.appendChild(li);
   li.innerText = country;
+  li.addEventListener("click", () => {
+    buildCountryData(countryCodeName);
+  });
 }
 
 async function buildDataForChart(region, status) {
   const data = [];
-  regionsCountriesShort[region].forEach(country => {
+  regionsCountriesShort[region].forEach((country) => {
     data.push(world[region][country][status]);
-  })
-  await buildChart(region, status ,data)
+  });
+  await buildChart(region, status, data);
 }
 
-async function buildChart(region, status ,data) {
-  let ctx = document.getElementById("myChart").getContext("2d");
-  if (myChart) {    myChart.destroy();  }
-  myChart = new Chart(ctx,{
-    type: 'bar',
+async function buildChart(region, status, data) {
+  hideStatus();
+  if (myChart) {
+    myChart.destroy();
+  }
+  myChart = new Chart(ctx, {
+    type: "bar",
     data: {
       labels: regionsCountries[region],
       datasets: [
@@ -161,5 +170,25 @@ async function buildChart(region, status ,data) {
       },
     },
   });
+  chart.style.display = "block";
+}
+function hideStatus(){
+  countryStatus.style.display = "none";
+  countryStatus.style.height = "0px";
+  statues.forEach(status =>{
+    status.style.display = "none";
+  })
 }
 
+function buildCountryData(countryCodeName) {
+  chart.style.display = "none";
+  statues[0].innerText =
+    "Confirmed: " + world[region][countryCodeName].confirmed;
+  statues[1].innerText = "Deaths: " + world[region][countryCodeName].deaths;
+  statues[2].innerText = "Recovered: " + world[region][countryCodeName].recovered;
+  statues[3].innerText = "Critical: " + world[region][countryCodeName].critical;
+  countryStatus.style.display = "flex";
+  countryStatus.style.height = "40vh";
+  statues.forEach(status =>{
+    status.style.display = "block";})
+}

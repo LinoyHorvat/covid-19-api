@@ -89,3 +89,17 @@ button:not(:disabled):active {
 button:disabled {
   box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
 }
+
+.country-data{
+  display: flex;
+  /* height: 50vh; */
+  align-items: center;
+  justify-content: center;
+}
+.status{
+  align-items: center;
+  padding: 5px;
+  margin: 10px;
+  border: 1px solid #4285f4;
+  border-radius: 24px;
+}
