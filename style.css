@@ -9,13 +9,7 @@ ul{
   display: flex;
   padding: 0;
   flex-wrap: wrap;
-
 }
-/* button{
-  margin: 2px;
-  cursor: pointer;
-  
-} */
 li {
   border-bottom: 1px solid white;
   font-size: 12px;

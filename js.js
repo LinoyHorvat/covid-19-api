@@ -5,7 +5,13 @@ const regionsCountries = {
   americas: [],
   world: [],
 };
-
+const regionsCountriesShort = {
+  asia: [],
+  europe: [],
+  africa: [],
+  americas: [],
+  world: [],
+};
 const world = {
   asia: {},
   europe: {},
@@ -22,15 +28,14 @@ btnRegions.forEach((btn) => {
     ul.innerHTML = "";
     if (Object.keys(world[region]).length === 0) {
       getCountriesByRegion(region);
-    }
-    else {
-      regionsCountries[region].forEach(country => {
+    } else {
+      regionsCountries[region].forEach((country) => {
         buildCountriesTxtBtn(country);
-      })
+      });
     }
   });
 });
-
+getCountriesByRegion("asia")
 async function getCountriesByRegion(region) {
   try {
     const result = await fetch(
@@ -39,6 +44,7 @@ async function getCountriesByRegion(region) {
     const data = await result.json();
     data.forEach((country) => {
       regionsCountries[region].push(country.name.common);
+      regionsCountriesShort[region].push(country.cca2);
       world[region][country.cca2] = {};
       fetchCovidData(region, country.cca2, country.name.common);
       buildCountriesTxtBtn(country.name.common);
@@ -99,3 +105,37 @@ function buildCountriesTxtBtn(country) {
   ul.appendChild(li);
   li.innerText = country;
 }
+
+buildChart("asia");
+
+function buildChart(region, data) {
+  const ctx = document.getElementById("myChart");
+  const myChart = new Chart(ctx,{
+    type: "bar",
+    data: {
+      // labels = regionsCountries[region],
+      datasets: [
+        {
+          label: "cases",
+          data: data,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+}
+
+function buildDataForChart(region, status) {
+  const data = [];
+  regionsCountriesShort[region].forEach(country => {
+    data.push(world[region][country][status]);
+  })
+  buildChart(region, data);
+}
+buildDataForChart("asia", "totalCases");
