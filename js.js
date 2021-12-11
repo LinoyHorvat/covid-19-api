@@ -18,13 +18,20 @@ const world = {
   africa: {},
   americas: {},
 };
+let region = 'asia';
+let status = 'Confirmed';
+let myChart = null; 
+
 // html
 const btnRegions = document.querySelectorAll("button.btn-regions");
+const btnStatus = document.querySelectorAll("button.btn-data");
 const ul = document.querySelector("ul");
+
+getCountriesByRegion(region);
 
 btnRegions.forEach((btn) => {
   btn.addEventListener("click", () => {
-    let region = btn.innerHTML.toLocaleLowerCase();
+    region = btn.innerHTML.toLocaleLowerCase();
     ul.innerHTML = "";
     if (Object.keys(world[region]).length === 0) {
       getCountriesByRegion(region);
@@ -33,9 +40,17 @@ btnRegions.forEach((btn) => {
         buildCountriesTxtBtn(country);
       });
     }
+    buildDataForChart(region, status);
   });
 });
-getCountriesByRegion("asia")
+
+btnStatus.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    status = btn.innerHTML.toLocaleLowerCase();
+    buildDataForChart(region, status);
+  });
+});
+
 async function getCountriesByRegion(region) {
   try {
     const result = await fetch(
@@ -48,7 +63,7 @@ async function getCountriesByRegion(region) {
       world[region][country.cca2] = {};
       fetchCovidData(region, country.cca2, country.name.common);
       buildCountriesTxtBtn(country.name.common);
-    });
+    })
   } catch (err) {
     console.log(err);
   }
@@ -67,16 +82,15 @@ async function fetchCovidData(region, country, name) {
         region,
         country,
         name,
-        confirmed,
-        newCases,
-        deaths,
-        newDeaths,
+        confirmed + newCases,
+        deaths + newDeaths,
         recovered,
         critical
       );
     } catch (err) {
       console.log(err);
     }
+    await buildDataForChart(region, status);
   }
 }
 
@@ -84,20 +98,16 @@ function buildWorldObj(
   region,
   country,
   name,
-  totalCases,
-  newCases,
-  totalDeaths,
-  newDeaths,
-  totalRecovered,
-  inCritical
+  confirmed,
+  deaths,
+  recovered,
+  critical
 ) {
   world[region][country]["name"] = name;
-  world[region][country]["totalCases"] = totalCases;
-  world[region][country]["newCases"] = newCases;
-  world[region][country]["totalDeaths"] = totalDeaths;
-  world[region][country]["newDeaths"] = newDeaths;
-  world[region][country]["totalRecovered"] = totalRecovered;
-  world[region][country]["inCritical"] = inCritical;
+  world[region][country]["confirmed"] = confirmed;
+  world[region][country]["deaths"] = deaths;
+  world[region][country]["recovered"] = recovered;
+  world[region][country]["critical"] = critical;
 }
 
 function buildCountriesTxtBtn(country) {
@@ -106,18 +116,40 @@ function buildCountriesTxtBtn(country) {
   li.innerText = country;
 }
 
-buildChart("asia");
+async function buildDataForChart(region, status) {
+  const data = [];
+  regionsCountriesShort[region].forEach(country => {
+    data.push(world[region][country][status]);
+  })
+  await buildChart(region, status ,data)
+}
 
-function buildChart(region, data) {
-  const ctx = document.getElementById("myChart");
-  const myChart = new Chart(ctx,{
-    type: "bar",
+async function buildChart(region, status ,data) {
+  let ctx = document.getElementById("myChart").getContext("2d");
+  if (myChart) {    myChart.destroy();  }
+  myChart = new Chart(ctx,{
+    type: 'bar',
     data: {
-      // labels = regionsCountries[region],
+      labels: regionsCountries[region],
       datasets: [
         {
-          label: "cases",
+          label: `${status}`,
           data: data,
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+          ],
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+          ],
+          borderWidth: 1,
         },
       ],
     },
@@ -131,11 +163,3 @@ function buildChart(region, data) {
   });
 }
 
-function buildDataForChart(region, status) {
-  const data = [];
-  regionsCountriesShort[region].forEach(country => {
-    data.push(world[region][country][status]);
-  })
-  buildChart(region, data);
-}
-buildDataForChart("asia", "totalCases");
