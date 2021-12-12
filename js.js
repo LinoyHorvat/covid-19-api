@@ -182,12 +182,13 @@ function hideStatus(){
 
 function buildCountryData(countryCodeName) {
   chart.style.display = "none";
-  statues[0].innerText =
+  statues[0].innerText = world[region][countryCodeName].name;
+  statues[1].innerText =
     "Confirmed: " + world[region][countryCodeName].confirmed;
-  statues[1].innerText = "Deaths: " + world[region][countryCodeName].deaths;
-  statues[2].innerText = "Recovered: " + world[region][countryCodeName].recovered;
-  statues[3].innerText = "Critical: " + world[region][countryCodeName].critical;
-  countryStatus.style.display = "flex";
+  statues[2].innerText = "Deaths: " + world[region][countryCodeName].deaths;
+  statues[3].innerText = "Recovered: " + world[region][countryCodeName].recovered;
+  statues[4].innerText = "Critical: " + world[region][countryCodeName].critical;
+  countryStatus.style.display = "block";
   countryStatus.style.height = "40vh";
   statues.forEach(status =>{
     status.style.display = "block";})
